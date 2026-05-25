@@ -2,28 +2,26 @@ using UnityEngine;
 
 public class EquipmentComponent : MonoBehaviour
 {
-    // TODO: 임시 1개 장착 웨폰
-    // 이후
-    public WeaponInstance currentWeapon;
+    // TODO: 슬롯 기반 다중 장착으로 확장 예정 (현재 단일 무기만 지원)
+    [SerializeField] private WeaponInstance _currentWeapon;
 
+    public WeaponInstance CurrentWeapon => _currentWeapon;
 
-    // Weapon Instance를 생성 합니다.
     public void Equip(WeaponData weaponData)
     {
-        // weaponData 기반으로 Instance 생성
-
-        // 스탯 생성?
+        // TODO: weaponData.weaponPrefab으로 WeaponInstance 생성 후 장착
+        // TODO: 장착 무기의 스탯을 AbilitySystemComponent에 적용
     }
 
     public void Unequip()
     {
-        Destroy(currentWeapon);
-        currentWeapon = null;
-        // 스탯 제거
-    }
+        if (_currentWeapon == null)
+        {
+            return;
+        }
 
-    private void UnequipInternal()
-    {
-
+        // TODO: AbilitySystemComponent에서 무기 스탯 제거
+        Destroy(_currentWeapon.gameObject);
+        _currentWeapon = null;
     }
 }

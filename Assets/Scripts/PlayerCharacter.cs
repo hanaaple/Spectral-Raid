@@ -7,9 +7,6 @@ using UnityEngine;
 [RequireComponent(typeof(AbilitySystemComponent))]
 public class PlayerCharacter : CharacterBase
 {
-    // 임시
-    public EquipmentComponent equipmentComponent;
-
     [SerializeField] private Transform model;
     [SerializeField] private float rotationSmoothing = 15f;
     [SerializeField] private float initialMoveSpeed = 5f;
