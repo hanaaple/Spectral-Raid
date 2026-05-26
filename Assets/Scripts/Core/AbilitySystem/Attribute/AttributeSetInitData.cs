@@ -13,6 +13,8 @@ namespace Core.AbilitySystem.Attribute
         [SerializeField]
         private List<AttributeFieldInitData> attributes = new();
 
+        public IReadOnlyList<AttributeFieldInitData> Attributes => attributes;
+
         public Type GetAttributeSetType()
         {
             if (string.IsNullOrEmpty(attributeSetTypeName))
