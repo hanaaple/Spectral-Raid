@@ -567,6 +567,29 @@
           </div>
         </li>
         <li>
+          <div class="todo-list__checkbox" data-id="ability-ge-execution"></div>
+          <div class="todo-list__content">
+            GE Execution 구현 — <code>GameplayEffectExecution</code> 서브클래스로 복잡한 스탯 계산 로직 분리
+            <ul class="todo-list__sub">
+              <li>· <code>Execute(GameplayEffectExecutionParameters)</code> 오버라이드로 커스텀 연산 구현</li>
+              <li>· <code>GameplayEffectExecutionOutput</code>에 결과 기록 후 ASC가 BaseValue에 반영</li>
+              <li>· 용도 예시: 방어력 관통 계산, 크리티컬 배율 등 단순 Modifier로 표현 불가한 로직</li>
+            </ul>
+          </div>
+        </li>
+        <li>
+          <div class="todo-list__checkbox" data-id="ability-ga"></div>
+          <div class="todo-list__content">
+            GameplayAbility (GA) 구현 — 스킬·액션을 GE와 연결하는 실행 단위
+            <ul class="todo-list__sub">
+              <li>· <code>ActivateAbility()</code> / <code>EndAbility()</code> 진입·종료 생명주기</li>
+              <li>· 코스트(Stamina 소모) / 쿨다운(Duration GE)을 GE로 표현</li>
+              <li>· <code>AbilitySystemComponent</code>에 GA 목록 등록·슬롯 관리</li>
+              <li>· 입력 바인딩: Skill_Q / Skill_R 액션과 GA 슬롯 연결</li>
+            </ul>
+          </div>
+        </li>
+        <li>
           <div class="todo-list__checkbox" data-id="ability-ge-stack"></div>
           <div class="todo-list__content">
             GE 스택 구현 — 같은 GE를 중복 적용할 때 스택 수 관리 및 Overflow 정책 결정
