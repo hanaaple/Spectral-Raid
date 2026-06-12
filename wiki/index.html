@@ -318,10 +318,6 @@
       <div><span class="tree-char">└── </span><span class="node-field">attributeSets[ ]</span></div>
       <div><span class="tree-char">&nbsp;&nbsp;&nbsp;&nbsp;└── </span><span class="node-field">typeName: "CharacterAttributeSet, Assembly..."</span></div>
       <div><span class="tree-char">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── </span><span class="node-field">attributes: [ { "Health", 100 }, { "Speed", 5 }, ... ]</span></div>
-      <div style="margin-top:10px"><span class="cm">▼ AbilitySystemComponent.Awake()</span></div>
-      <div><span class="node-field">Type.GetType(typeName) → Activator.CreateInstance()</span></div>
-      <div><span class="node-field">→ FieldInfo.SetValue(set, AttributeData(baseValue))  // 각 fieldName별 세팅</span></div>
-      <div><span class="node-field">→ AddAttributeSet(set)  // _spawnedAttributeSets[Type] = set</span></div>
     </div>
 
     <!-- ── GameplayEffect ──────────────────────────────────────── -->
