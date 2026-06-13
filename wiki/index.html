@@ -14,22 +14,7 @@
     <div class="sidebar__title">⬡ Spectral Raid</div>
     <div class="sidebar__subtitle">프로젝트 위키 — 포트폴리오</div>
   </div>
-
-  <div class="sidebar__section-label">개요</div>
-  <a href="#overview" class="sidebar__link"><span class="icon">🎮</span> 게임 개요</a>
-  <a href="#mvp"      class="sidebar__link"><span class="icon">📋</span> MVP 현황</a>
-  <a href="#packages" class="sidebar__link"><span class="icon">📦</span> 패키지</a>
-
-  <div class="sidebar__section-label">아키텍처</div>
-  <a href="#arch"          class="sidebar__link"><span class="icon">🏗</span> 컨트롤러·캐릭터</a>
-  <a href="#ability-system" class="sidebar__link"><span class="icon">⚡</span> AbilitySystem</a>
-  <a href="#scenes"        class="sidebar__link"><span class="icon">🗺</span> 씬 구성</a>
-  <a href="#camera" class="sidebar__link"><span class="icon">🎥</span> 카메라</a>
-  <a href="#input"  class="sidebar__link"><span class="icon">⌨</span> 입력 액션맵</a>
-
-  <div class="sidebar__section-label">개발 가이드</div>
-  <a href="#convention" class="sidebar__link"><span class="icon">📐</span> 코드 컨벤션</a>
-  <a href="#todo"       class="sidebar__link"><span class="icon">✅</span> TODO</a>
+  <div id="sidebar-nav"></div>
 </nav>
 
 <!-- ══ MAIN ═════════════════════════════════════════════════════ -->
@@ -196,27 +181,65 @@
 
     <p>입력을 소유하는 <strong>Controller</strong>와 실제 이동·전투 로직을 갖는 <strong>Character</strong>를 분리해 멀티플레이 확장과 AI 전환을 대비한다.</p>
 
-    <div class="arch-diagram">
-      <div><span class="node-abstract">ControllerBase (abstract)</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="node-abstract">CharacterBase (abstract)</span></div>
-      <div><span class="tree-char">└── </span><span class="node-name">PlayerController</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tree-char">├── </span><span class="node-name">PlayerCharacter</span></div>
-      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="node-field">- _possessedCharacter</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tree-char">└── </span><span class="node-name">MonsterCharacter</span></div>
-      <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="node-field">- Input 구독 / 해제</span></div>
-    </div>
-
-    <div class="card-grid" style="margin-top:16px">
-      <div class="card">
-        <h3>ControllerBase</h3>
-        <p><code>Possess(CharacterBase)</code>, <code>HasAuthority()</code> — 현재 항상 true, 멀티플레이 대비 TODO</p>
+    <div class="class-layout">
+      <div class="class-tree">
+        <div class="class-card class-card--abstract">
+          <div class="class-card__header">
+            <span class="class-card__name">ControllerBase</span>
+            <span class="class-card__tag">abstract</span>
+          </div>
+          <div class="class-card__body">
+            <span class="class-card__field">_possessedCharacter (protected)</span>
+            <span class="class-card__field">Possess(CharacterBase)</span>
+            <span class="class-card__field">HasAuthority() — 멀티 대비 TODO</span>
+          </div>
+        </div>
+        <div class="class-tree__children">
+          <div class="class-tree__branch">
+            <div class="class-card">
+              <div class="class-card__header">
+                <span class="class-card__name">PlayerController</span>
+              </div>
+              <div class="class-card__body">
+                <span class="class-card__field">OnEnable/OnDisable 입력 구독·해제</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="card">
-        <h3>PlayerController</h3>
-        <p><code>OnEnable</code> / <code>OnDisable</code>에서 <code>PlayerInputActions</code> 구독·해제. 입력을 Character 메서드 호출로 전달.</p>
+
+      <div class="class-tree">
+        <div class="class-card class-card--abstract">
+          <div class="class-card__header">
+            <span class="class-card__name">CharacterBase</span>
+            <span class="class-card__tag">abstract</span>
+          </div>
+        </div>
+        <div class="class-tree__children">
+          <div class="class-tree__branch">
+            <div class="class-card">
+              <div class="class-card__header">
+                <span class="class-card__name">PlayerCharacter</span>
+              </div>
+              <div class="class-card__body">
+                <span class="class-card__field">MoveDelta(Vector3, float) — 이동 로직 소유</span>
+              </div>
+            </div>
+          </div>
+          <div class="class-tree__branch">
+            <div class="class-card">
+              <div class="class-card__header">
+                <span class="class-card__name">MonsterCharacter</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
     <div class="callout">
       <span class="callout__icon">📌</span>
-      <span>이동 로직은 Controller가 아닌 <strong>Character가 소유</strong>한다. (<code>PlayerCharacter.MoveTo(Vector3)</code>)</span>
+      <span>이동 로직은 Controller가 아닌 <strong>Character가 소유</strong>한다. (<code>PlayerCharacter.MoveDelta(Vector3, float)</code>)</span>
     </div>
   </section>
 
@@ -232,7 +255,7 @@
       <code>Assets/Scripts/Core/AbilitySystem/</code>
     </p>
 
-    <div class="callout">
+    <div class="callout" style="margin-bottom:0">
       <span class="callout__icon">🎯</span>
       <span>
         <strong>설계 의도</strong> —
@@ -243,276 +266,351 @@
       </span>
     </div>
 
-    <!-- ── Attribute ──────────────────────────────────────────── -->
-    <div class="group-label">Attribute 시스템</div>
-
-    <h3>레이어 구조</h3>
-    <div class="arch-diagram">
-      <div><span class="cm">// ── 에셋 — 초기값 정의 (Inspector에서 편집) ──────────────────────</span></div>
-      <div><span class="node-name">AttributeInitData</span> <span class="node-field">(ScriptableObject)</span></div>
-      <div><span class="tree-char">└── </span><span class="node-name">AttributeSetInitData</span><span class="node-field">[]  — 어떤 AttributeSet을 어떤 값으로 초기화할지</span></div>
-      <div><span class="tree-char">&nbsp;&nbsp;&nbsp;&nbsp;└── </span><span class="node-name">AttributeFieldInitData</span><span class="node-field">[]  — { fieldName, BaseValue } 쌍</span></div>
-      <div style="margin-top:10px"><span class="cm">// ── 런타임 — 수치 저장소 ─────────────────────────────────────────</span></div>
-      <div><span class="node-abstract">AttributeSet</span> <span class="node-field">(abstract class) — 어트리뷰트 컨테이너. 확장 시 서브클래스 추가</span></div>
-      <div><span class="tree-char">├── </span><span class="node-name">CharacterAttributeSet</span> <span class="node-field">{ Health, MaxHealth, Stamina, MaxStamina, Speed }</span></div>
-      <div><span class="tree-char">└── </span><span class="node-name">CombatAttributeSet</span>   <span class="node-field">{ Damage }</span></div>
-      <div style="margin-top:10px"><span class="cm">// ── 식별자 / 데이터 단위 ──────────────────────────────────────────</span></div>
-      <div><span class="node-name">AttributeHandle</span> <span class="node-field">(readonly struct)  — SetType + fieldName + FieldInfo 캐싱</span></div>
-      <div><span class="node-name">AttributeData</span>   <span class="node-field">(struct)           — BaseValue / CurrentValue 쌍</span></div>
-      <div style="margin-top:10px"><span class="cm">// ── 진입점 ───────────────────────────────────────────────────────</span></div>
-      <div><span class="node-name">AbilitySystemComponent</span> <span class="node-field">(MonoBehaviour) — Dictionary&lt;Type, AttributeSet&gt; 보유</span></div>
+    <!-- 탭 -->
+    <div class="tab-bar" id="ability-tabs">
+      <button class="tab-btn is-active" data-tab="attr">Attribute</button>
+      <button class="tab-btn" data-tab="ge">GameplayEffect</button>
+      <button class="tab-btn" data-tab="api">API</button>
     </div>
 
-    <h3>AttributeData — BaseValue / CurrentValue 이중 구조</h3>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>필드</th><th>의미</th><th>변경 주체</th></tr></thead>
-        <tbody>
-          <tr>
-            <td><code>BaseValue</code></td>
-            <td>수치의 원본값. 영구 변경에 해당. Effect 해제 후에도 유지된다.</td>
-            <td>Instant GE, <code>SetBaseAttributeValue()</code>, Periodic GE</td>
-          </tr>
-          <tr>
-            <td><code>CurrentValue</code></td>
-            <td>활성 GE 모디파이어를 BaseValue에 누산한 결과값. UI·전투 판정에 사용.</td>
-            <td>ASC — Effect 적용·해제 시 자동 재계산 (dirty-on-write)</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <!-- ── Tab: Attribute ──────────────────────────────────── -->
+    <div class="tab-panel" data-panel="attr" data-tabs="ability-tabs">
+      <div class="group-label" id="attr-system" style="margin-top:4px;border-top:none">Attribute 시스템</div>
 
-    <div class="callout">
-      <span class="callout__icon">📌</span>
-      <span>
-        <strong>dirty-on-write 전략</strong> —
-        CurrentValue는 Effect 적용·해제 시점에 한 번만 재계산한다.
-        읽기(UI 갱신·전투 판정)는 캐싱된 값을 그대로 반환하므로 호출 빈도가 높아도 비용이 없다.
-        반대로 <em>recalculate-on-read</em> 방식은 읽기 호출마다 활성 Effect 전체를 순회해야 한다.
-      </span>
-    </div>
+      <details class="accordion" open>
+        <summary class="accordion__header">레이어 구조</summary>
+        <div class="accordion__body">
+          <div class="class-flow">
+            <div class="class-card class-card--so">
+              <div class="class-card__header">
+                <span class="class-card__name">AttributeInitData</span>
+                <span class="class-card__tag">ScriptableObject</span>
+              </div>
+              <div class="class-card__body">
+                <span class="class-card__field">AttributeSetInitData[]</span>
+                <span class="class-card__field">↳ typeName + AttributeFieldInitData[]</span>
+                <span class="class-card__field">&nbsp;&nbsp;↳ { fieldName, BaseValue }</span>
+              </div>
+            </div>
+            <div class="class-flow__arrow">
+              <span>→</span>
+              <span class="class-flow__arrow-label">Awake 초기화</span>
+            </div>
+            <div class="class-card">
+              <div class="class-card__header">
+                <span class="class-card__name">AbilitySystemComponent</span>
+                <span class="class-card__tag">MonoBehaviour</span>
+              </div>
+              <div class="class-card__body">
+                <span class="class-card__field">Dictionary&lt;Type, AttributeSet&gt;</span>
+              </div>
+            </div>
+          </div>
 
-    <h3>AttributeHandle — Reflection 비용 격리</h3>
-    <p>
-      GE Modifier는 "어떤 어트리뷰트를 대상으로 할지"를 <code>AttributeHandle</code>로 지정한다.
-      핸들은 생성 시 1회 Reflection으로 <code>FieldInfo</code>를 캐싱하고,
-      이후 런타임 읽기·쓰기는 캐싱된 참조만 사용한다.
-    </p>
-    <div class="code-block">
-      <div class="code-block__header">
-        <div class="code-block__dots"><span></span><span></span><span></span></div>
-        <span class="code-block__lang">C# — AttributeHandle 선언 패턴</span>
-      </div>
-      <pre><span class="cm">// static readonly 선언 → 앱 수명 동안 FieldInfo를 단 한 번만 resolve</span>
-<span class="kw">public static readonly</span> <span class="ty">AttributeHandle</span> Health =
-    <span class="kw">new</span>(<span class="kw">typeof</span>(<span class="ty">CharacterAttributeSet</span>), <span class="kw">nameof</span>(<span class="ty">CharacterAttributeSet</span>.Health));
+          <div class="class-layout">
+            <div class="class-tree">
+              <div class="class-card class-card--abstract">
+                <div class="class-card__header">
+                  <span class="class-card__name">AttributeSet</span>
+                  <span class="class-card__tag">abstract</span>
+                </div>
+              </div>
+              <div class="class-tree__children">
+                <div class="class-tree__branch">
+                  <div class="class-card">
+                    <div class="class-card__header">
+                      <span class="class-card__name">CharacterAttributeSet</span>
+                    </div>
+                    <div class="class-card__body">
+                      <span class="class-card__field">Health, MaxHealth</span>
+                      <span class="class-card__field">Stamina, MaxStamina, Speed</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="class-tree__branch">
+                  <div class="class-card">
+                    <div class="class-card__header">
+                      <span class="class-card__name">CombatAttributeSet</span>
+                    </div>
+                    <div class="class-card__body">
+                      <span class="class-card__field">Damage</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-<span class="cm">// 읽기·쓰기는 캐싱된 FieldInfo를 통해 수행 — 런타임 string 탐색 없음</span>
-<span class="ty">float</span> hp = asc.<span class="fn">GetAttributeCurrentValue</span>(Health);</pre>
-    </div>
-
-    <h3>SO 초기화 흐름 — 코드 없이 초기 스탯 설정</h3>
-    <p>캐릭터마다 다른 초기 스탯을 코드 변경 없이 Inspector에서 관리한다. <code>Awake()</code>에서 Reflection으로 인스턴스를 생성하고 필드를 세팅한다.</p>
-    <div class="arch-diagram">
-      <div><span class="node-name">AttributeInitData</span> <span class="node-field">(SO — Inspector에서 할당)</span></div>
-      <div><span class="tree-char">└── </span><span class="node-field">attributeSets[ ]</span></div>
-      <div><span class="tree-char">&nbsp;&nbsp;&nbsp;&nbsp;└── </span><span class="node-field">typeName: "CharacterAttributeSet, Assembly..."</span></div>
-      <div><span class="tree-char">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── </span><span class="node-field">attributes: [ { "Health", 100 }, { "Speed", 5 }, ... ]</span></div>
-    </div>
-
-    <!-- ── GameplayEffect ──────────────────────────────────────── -->
-    <div class="group-label" style="margin-top:48px">GameplayEffect 시스템</div>
-
-    <h3>에셋 / 런타임 레이어 분리</h3>
-    <p>
-      GE는 <strong>불변 정의(ScriptableObject 에셋)</strong>와
-      <strong>적용 인스턴스(런타임 Spec)</strong>로 철저히 분리된다.
-      SO는 여러 캐릭터가 공유해도 상태가 섞이지 않고,
-      Spec은 적용 시점의 Level·Context를 스냅샷해 독립적으로 관리된다.
-    </p>
-    <div class="arch-diagram">
-      <div><span class="cm">// ── 에셋 — 불변 정의 (Inspector에서 편집) ──────────────────────</span></div>
-      <div><span class="node-name">GameplayEffect</span> <span class="node-field">(ScriptableObject)</span></div>
-      <div><span class="tree-char">├── </span><span class="node-field">type: GameplayEffectType</span></div>
-      <div><span class="tree-char">├── </span><span class="node-field">duration, period, executePeriodicEffectOnApplication</span></div>
-      <div><span class="tree-char">├── </span><span class="node-field">modifiers: GameplayModifier[]  ← Serializable struct</span></div>
-      <div><span class="tree-char">└── </span><span class="node-field">executions: GameplayEffectExecution[]  ← SO 참조 (추상 클래스)</span></div>
-      <div style="margin-top:8px"><span class="node-name">GameplayModifier</span> <span class="node-field">(Serializable struct — GE에 포함)</span></div>
-      <div><span class="tree-char">├── </span><span class="node-field">attributeSetTypeName + fieldName  → 런타임에 AttributeHandle로 변환</span></div>
-      <div><span class="tree-char">├── </span><span class="node-field">operation: GameplayModifierOperation</span></div>
-      <div><span class="tree-char">└── </span><span class="node-field">magnitude  (현재 ScalableFloat 고정값 — TODO: Level 커브 테이블)</span></div>
-      <div style="margin-top:14px"><span class="cm">// ── 런타임 — 적용 인스턴스 ──────────────────────────────────────</span></div>
-      <div><span class="node-name">GameplayEffectSpec</span> <span class="node-field">(class — ApplyEffect 시 생성)</span></div>
-      <div><span class="tree-char">├── </span><span class="node-field">Definition: GameplayEffect  ← 원본 SO 참조 (불변)</span></div>
-      <div><span class="tree-char">├── </span><span class="node-field">Context: GameplayEffectContextHandle  ← Instigator ASC, EffectCauser</span></div>
-      <div><span class="tree-char">├── </span><span class="node-field">Level: float</span></div>
-      <div><span class="tree-char">└── </span><span class="node-field">Modifiers: GameplayModifierSpec[]  ← 생성 시 Handle resolve + Magnitude 계산 완료</span></div>
-      <div style="margin-top:8px"><span class="node-name">GameplayModifierSpec</span> <span class="node-field">(readonly struct — Spec에 포함)</span></div>
-      <div><span class="tree-char">├── </span><span class="node-field">Handle: AttributeHandle  ← resolve 완료 (FieldInfo 캐싱)</span></div>
-      <div><span class="tree-char">├── </span><span class="node-field">Operation: GameplayModifierOperation</span></div>
-      <div><span class="tree-char">└── </span><span class="node-field">EvaluatedMagnitude: float  ← Level 기반 계산 완료</span></div>
-      <div style="margin-top:8px"><span class="node-name">ActiveGameplayEffect</span> <span class="node-field">(class — _activeEffects Dictionary에 등록)</span></div>
-      <div><span class="tree-char">├── </span><span class="node-field">Handle: ActiveGameplayEffectHandle  ← 제거 키 (int ID 래퍼)</span></div>
-      <div><span class="tree-char">├── </span><span class="node-field">Spec: GameplayEffectSpec</span></div>
-      <div><span class="tree-char">├── </span><span class="node-field">RemainingDuration  ← Duration 타입 전용</span></div>
-      <div><span class="tree-char">└── </span><span class="node-field">PeriodTimer  ← 마지막 주기 실행 이후 경과 시간</span></div>
-    </div>
-
-    <div class="callout">
-      <span class="callout__icon">📌</span>
-      <span>
-        <strong>Spec 생성 시 Modifier를 미리 resolve하는 이유</strong> —
-        <code>GameplayModifier</code>는 대상 어트리뷰트를 문자열(AssemblyQualifiedName + fieldName)로 직렬화한다.
-        이를 <code>AttributeHandle</code>(<code>FieldInfo</code> 캐싱)로 변환하는 비용이 있으므로,
-        Spec 생성 시점에 단 1회만 수행하고 이후 Tick·재계산에서는 캐싱된 핸들만 사용한다.
-        GE SO 하나가 수십 개의 Active Effect로 동시에 적용되더라도 resolve 비용은 각 Spec마다 1회뿐이다.
-      </span>
-    </div>
-
-    <h3>GameplayEffectType</h3>
-    <div class="card-grid" style="grid-template-columns:1fr 1fr 1fr; margin-bottom:8px">
-      <div class="info-card">
-        <div class="info-card__label">Instant</div>
-        <div class="info-card__value">
-          <code>BaseValue</code>를 즉시 영구 변경 후 종료.
-          Active Effect로 등록되지 않으므로 Handle 없음.
-          <br><small style="color:var(--text-muted)">예: 체력 회복, 데미지</small>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div class="class-card">
+                <div class="class-card__header">
+                  <span class="class-card__name">AttributeHandle</span>
+                  <span class="class-card__tag">readonly struct</span>
+                </div>
+                <div class="class-card__body">
+                  <span class="class-card__field">SetType + fieldName + FieldInfo</span>
+                </div>
+              </div>
+              <div class="class-card">
+                <div class="class-card__header">
+                  <span class="class-card__name">AttributeData</span>
+                  <span class="class-card__tag">struct</span>
+                </div>
+                <div class="class-card__body">
+                  <span class="class-card__field">BaseValue / CurrentValue</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="info-card">
-        <div class="info-card__label">Infinite</div>
-        <div class="info-card__value">
-          명시적 <code>Remove</code> 전까지 <code>CurrentValue</code>에 지속 반영.
-          <br><small style="color:var(--text-muted)">예: 장비 스탯 버프, 패시브</small>
+      </details>
+
+      <details class="accordion">
+        <summary class="accordion__header">BaseValue / CurrentValue 이중 구조</summary>
+        <div class="accordion__body">
+          <p style="margin-bottom:12px">
+            <code>BaseValue</code>는 영구 원본값, <code>CurrentValue</code>는 활성 GE 모디파이어를 누산한 결과값이다.
+            UI·전투 판정은 CurrentValue를 읽고, Effect 해제 후에는 BaseValue만 남는다.
+          </p>
+          <div class="callout">
+            <span class="callout__icon">📌</span>
+            <span>
+              <strong>dirty-on-write 전략</strong> —
+              CurrentValue는 Effect 적용·해제 시점에만 재계산한다.
+              읽기 호출 빈도와 무관하게 비용이 없으며,
+              매 읽기마다 활성 Effect를 전부 순회하는 <em>recalculate-on-read</em>와의 핵심 차이다.
+            </span>
+          </div>
         </div>
-      </div>
-      <div class="info-card">
-        <div class="info-card__label">Duration</div>
-        <div class="info-card__value">
-          지정 시간 후 자동 해제. Period 설정 시 주기마다 추가 실행.
-          <br><small style="color:var(--text-muted)">예: 버프·디버프, DoT·HoT</small>
+      </details>
+
+      <details class="accordion">
+        <summary class="accordion__header">AttributeHandle — Reflection 비용 격리</summary>
+        <div class="accordion__body">
+          <p>
+            GE Modifier가 대상 어트리뷰트를 지정하는 경량 식별자.
+            <code>static readonly</code>로 선언해 앱 수명 동안 Reflection(<code>FieldInfo</code>)을 단 1회만 수행하고,
+            이후 런타임 읽기·쓰기는 캐싱된 참조만 사용한다. 런타임 string 탐색 비용 없음.
+          </p>
         </div>
+      </details>
+
+      <details class="accordion">
+        <summary class="accordion__header">SO 초기화 흐름 — 코드 없이 초기 스탯 설정</summary>
+        <div class="accordion__body">
+          <p style="margin-bottom:12px">캐릭터마다 다른 초기 스탯을 코드 변경 없이 Inspector에서 관리한다. SO에 정의된 fieldName·BaseValue 목록을 <code>Awake()</code>에서 읽어 AttributeSet 인스턴스를 생성한다.</p>
+          <div class="class-flow">
+            <div class="class-card class-card--so">
+              <div class="class-card__header">
+                <span class="class-card__name">AttributeInitData</span>
+                <span class="class-card__tag">Inspector 할당</span>
+              </div>
+              <div class="class-card__body">
+                <span class="class-card__field">typeName: "CharacterAttributeSet, …"</span>
+                <span class="class-card__field">attributes: [{ "Health", 100 }, …]</span>
+              </div>
+            </div>
+            <div class="class-flow__arrow">
+              <span>→</span>
+              <span class="class-flow__arrow-label">Awake Reflection</span>
+            </div>
+            <div class="class-card class-card--runtime">
+              <div class="class-card__header">
+                <span class="class-card__name">AttributeSet</span>
+                <span class="class-card__tag">런타임 인스턴스</span>
+              </div>
+              <div class="class-card__body">
+                <span class="class-card__field">fieldName → FieldInfo → BaseValue 세팅</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <!-- ── Tab: GameplayEffect ─────────────────────────────── -->
+    <div class="tab-panel is-hidden" data-panel="ge" data-tabs="ability-tabs">
+      <div class="group-label" id="ge-system" style="margin-top:4px;border-top:none">GameplayEffect 시스템</div>
+
+      <details class="accordion" open>
+        <summary class="accordion__header">에셋 / 런타임 레이어 분리</summary>
+        <div class="accordion__body">
+          <p style="margin-bottom:12px">
+            GE는 <strong>불변 정의(ScriptableObject 에셋)</strong>와
+            <strong>적용 인스턴스(런타임 Spec)</strong>로 철저히 분리된다.
+            SO는 여러 캐릭터가 공유해도 상태가 섞이지 않고,
+            Spec은 적용 시점의 Level·Context를 스냅샷해 독립적으로 관리된다.
+          </p>
+          <div class="class-flow">
+            <div class="class-card class-card--so">
+              <div class="class-card__header">
+                <span class="class-card__name">GameplayEffect</span>
+                <span class="class-card__tag">ScriptableObject</span>
+              </div>
+              <div class="class-card__body">
+                <span class="class-card__field">type: GameplayEffectType</span>
+                <span class="class-card__field">duration, period</span>
+                <span class="class-card__field">modifiers: GameplayModifier[]</span>
+                <span class="class-card__field">executions: GameplayEffectExecution[]</span>
+              </div>
+            </div>
+            <div class="class-flow__arrow">
+              <span>→</span>
+              <span class="class-flow__arrow-label">ApplyEffect</span>
+            </div>
+            <div class="class-card class-card--runtime">
+              <div class="class-card__header">
+                <span class="class-card__name">GameplayEffectSpec</span>
+                <span class="class-card__tag">런타임</span>
+              </div>
+              <div class="class-card__body">
+                <span class="class-card__field">Definition: GE (불변 참조)</span>
+                <span class="class-card__field">Context: GEContextHandle</span>
+                <span class="class-card__field">Level: float</span>
+                <span class="class-card__field">Modifiers: GEModifierSpec[]</span>
+              </div>
+            </div>
+            <div class="class-flow__arrow">
+              <span>→</span>
+              <span class="class-flow__arrow-label">Duration/Infinite</span>
+            </div>
+            <div class="class-card class-card--runtime">
+              <div class="class-card__header">
+                <span class="class-card__name">ActiveGameplayEffect</span>
+                <span class="class-card__tag">_activeEffects</span>
+              </div>
+              <div class="class-card__body">
+                <span class="class-card__field">Handle: AGEHandle</span>
+                <span class="class-card__field">Spec: GameplayEffectSpec</span>
+                <span class="class-card__field">RemainingDuration</span>
+                <span class="class-card__field">PeriodTimer</span>
+              </div>
+            </div>
+          </div>
+          <div class="callout" style="margin-top:12px">
+            <span class="callout__icon">📌</span>
+            <span>
+              <strong>Spec 생성 시 Modifier를 미리 resolve하는 이유</strong> —
+              <code>GameplayModifier</code>는 대상 어트리뷰트를 문자열로 직렬화한다.
+              이를 <code>AttributeHandle</code>(<code>FieldInfo</code> 캐싱)로 변환하는 비용이 있으므로
+              Spec 생성 시점에 단 1회만 수행한다. GE SO 하나가 수십 개의 Active Effect로
+              동시에 적용되더라도 resolve 비용은 각 Spec마다 1회뿐이다.
+            </span>
+          </div>
+        </div>
+      </details>
+
+      <details class="accordion">
+        <summary class="accordion__header">GameplayEffectType — Instant / Infinite / Duration</summary>
+        <div class="accordion__body">
+          <div class="card-grid" style="grid-template-columns:1fr 1fr 1fr">
+            <div class="info-card">
+              <div class="info-card__label">Instant</div>
+              <div class="info-card__value">
+                <code>BaseValue</code>를 즉시 영구 변경 후 종료.
+                Active Effect로 등록되지 않으므로 Handle 없음.
+                <br><small style="color:var(--text-muted)">예: 체력 회복, 데미지</small>
+              </div>
+            </div>
+            <div class="info-card">
+              <div class="info-card__label">Infinite</div>
+              <div class="info-card__value">
+                명시적 <code>Remove</code> 전까지 <code>CurrentValue</code>에 지속 반영.
+                <br><small style="color:var(--text-muted)">예: 장비 스탯 버프, 패시브</small>
+              </div>
+            </div>
+            <div class="info-card">
+              <div class="info-card__label">Duration</div>
+              <div class="info-card__value">
+                지정 시간 후 자동 해제. Period 설정 시 주기마다 추가 실행.
+                <br><small style="color:var(--text-muted)">예: 버프·디버프, DoT·HoT</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details class="accordion">
+        <summary class="accordion__header">Apply 흐름</summary>
+        <div class="accordion__body">
+          <p style="margin-bottom:12px">
+            <code>ApplyGameplayEffectToSelf</code>는 GE SO로부터 Spec(런타임 인스턴스)을 생성하고 타입에 따라 분기한다.
+            <strong>Instant</strong>는 즉시 BaseValue를 변경 후 Handle 없이 종료.
+            <strong>Duration / Infinite</strong>는 <code>_activeEffects</code>에 등록하고 Handle을 반환 — 핸들로 명시적 해제 가능.
+          </p>
+          <div class="callout">
+            <span class="callout__icon">⏱</span>
+            <span>
+              <strong>Period &gt; 0</strong>이면 매 프레임 경과 시간을 누적하고 주기 도달 시 BaseValue를 직접 변경한다.
+              CurrentValue를 수정하는 persistent modifier와 달리 원본 수치를 반복 수정하므로 DoT·HoT에 적합하다.
+            </span>
+          </div>
+        </div>
+      </details>
+
+      <details class="accordion">
+        <summary class="accordion__header">ModifierOperation — CurrentValue 계산</summary>
+        <div class="accordion__body">
+          <p style="margin-bottom:12px">
+            6가지 연산(<code>AddBase</code>, <code>MultiplyAdditive</code>, <code>DivideAdditive</code>,
+            <code>MultiplyCompound</code>, <code>AddFinal</code>, <code>Override</code>)을 조합해
+            활성 GE 전체를 한 번의 aggregation으로 처리한다.
+          </p>
+          <p style="font-family:var(--mono);font-size:12px;color:var(--text-secondary);background:var(--code-bg);padding:12px 16px;border-radius:var(--radius-sm);border:1px solid var(--code-border)">
+            CurrentValue = ((Base + ΣAddBase) × MultiplyAdditive / DivideAdditive × ΠMultiplyCompound) + ΣAddFinal
+          </p>
+          <p style="margin-top:10px;font-size:12.5px;color:var(--text-muted)">
+            Override가 하나라도 있으면 위 계산 전체를 무시하고 해당 값으로 고정. — <em>예: 스턴 시 Speed = 0</em>
+          </p>
+        </div>
+      </details>
+
+      <details class="accordion">
+        <summary class="accordion__header">GameplayEffectContext — 발동 맥락</summary>
+        <div class="accordion__body">
+          <p>
+            GE 적용 시 발동 주체(<code>Instigator</code> ASC)와 실제 원인 오브젝트(<code>EffectCauser</code>)를 함께 전달한다.
+            <code>GameplayEffectContextHandle</code>은 null-safe struct 래퍼로, 맥락이 불필요하면 <code>default</code>로 생략 가능하다.
+            Execution 내부에서 Source·Target의 Context를 읽어 크리티컬·관통 등 조건부 계산에 활용할 수 있다.
+          </p>
+        </div>
+      </details>
+
+      <details class="accordion">
+        <summary class="accordion__header">GameplayEffectExecution — 복합 계산 <span class="badge badge--wip" style="margin-left:8px;font-size:10px">서브클래스 없음</span></summary>
+        <div class="accordion__body">
+          <div class="callout callout--warn">
+            <span class="callout__icon">🔧</span>
+            <span>
+              단순 Modifier로 표현할 수 없는 복합 계산
+              (예: Source.Damage − Target.Armor × 관통률)을
+              <code>GameplayEffectExecution</code> ScriptableObject 서브클래스로 캡슐화한다.
+              <code>Execute(parameters)</code> 안에서 Source·Target ASC를 읽고
+              <code>parameters.AddOutput(handle, magnitude)</code>으로 결과를 출력하면
+              ASC가 <code>AddBase</code> / <code>Override</code> 연산으로 BaseValue에 즉시 반영한다.
+            </span>
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <!-- ── Tab: API ───────────────────────────────────────────── -->
+    <div class="tab-panel is-hidden" data-panel="api" data-tabs="ability-tabs">
+      <div class="group-label" style="margin-top:4px;border-top:none">AbilitySystemComponent 주요 API</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>메서드</th><th>용도</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>ApplyGameplayEffectToSelf(GE, ctx, level)</code></td><td>GE SO → Spec 생성 후 자신에게 적용. Instant는 즉시 실행 후 Invalid Handle 반환.</td></tr>
+            <tr><td><code>RemoveActiveGameplayEffect(handle)</code></td><td>핸들로 이펙트 제거. Period == 0이었으면 CurrentValue 재계산.</td></tr>
+            <tr><td><code>GetAttributeCurrentValue(handle)</code></td><td>모디파이어 누산 후 CurrentValue 반환 (캐싱된 값, 재계산 없음).</td></tr>
+            <tr><td><code>GetAttributeBaseValue(handle)</code></td><td>원본 BaseValue 반환.</td></tr>
+            <tr><td><code>SetBaseAttributeValue(handle, float)</code></td><td>BaseValue 직접 설정 후 CurrentValue 재계산.</td></tr>
+            <tr><td><code>AddAttributeSet(set)</code></td><td>AttributeSet 등록. 같은 타입은 하나만 허용 (<code>TryAdd</code>).</td></tr>
+          </tbody>
+        </table>
       </div>
-    </div>
-
-    <h3>Apply 흐름</h3>
-    <div class="code-block">
-      <div class="code-block__header">
-        <div class="code-block__dots"><span></span><span></span><span></span></div>
-        <span class="code-block__lang">흐름도</span>
-      </div>
-      <pre><span class="fn">ApplyGameplayEffectToSelf</span>(GE so, context, level)
-  <span class="op">▶</span> <span class="kw">new</span> <span class="ty">GameplayEffectSpec</span>(so, context, level)
-      <span class="cm">// GameplayModifier → GameplayModifierSpec 변환 (Handle resolve + Magnitude 계산)</span>
-
-  <span class="cm">// ── Instant ───────────────────────────────────────────────────</span>
-  <span class="op">▶</span> <span class="fn">ExecuteModifiers</span>(spec)   <span class="cm">// BaseValue 직접 변경 → CurrentValue 재계산</span>
-  <span class="op">▶</span> return <span class="ty">ActiveGameplayEffectHandle</span>.Invalid
-
-  <span class="cm">// ── Duration / Infinite ──────────────────────────────────────</span>
-  <span class="op">▶</span> <span class="kw">new</span> <span class="ty">ActiveGameplayEffect</span>(handle, spec)
-  <span class="op">▶</span> _activeEffects.Add(handle, active)
-  <span class="op">▶</span> Period &gt; 0 &amp;&amp; ExecuteOnApplication  <span class="op">→</span> <span class="fn">ExecuteModifiers</span>()       <span class="cm">// 즉시 1회 실행</span>
-  <span class="op">▶</span> Period == 0                          <span class="op">→</span> <span class="fn">RecalculateAffectedAttributes</span>()  <span class="cm">// CurrentValue 반영</span>
-  <span class="op">▶</span> return handle
-
-<span class="cm">// ── Tick (매 프레임) ─────────────────────────────────────────────</span>
-<span class="fn">TickActiveEffects</span>(deltaTime)
-  <span class="op">▶</span> Period &gt; 0  <span class="op">→</span> PeriodTimer 누산 → 주기 도달 시 <span class="fn">ExecuteModifiers</span>()
-  <span class="op">▶</span> Duration    <span class="op">→</span> RemainingDuration 감산 → 0 이하 시 <span class="fn">RemoveActiveGameplayEffect</span>(handle)</pre>
-    </div>
-
-    <h3>Period — 주기 실행 (DoT / HoT)</h3>
-    <div class="callout">
-      <span class="callout__icon">⏱</span>
-      <span>
-        <code>Period &gt; 0</code>이면 Tick마다 경과 시간을 누적하고 주기 도달 시
-        <code>ExecuteModifiers()</code>를 호출한다.
-        이때 Modifier는 <code>CurrentValue</code>가 아닌 <strong>BaseValue를 직접 변경</strong>하므로
-        독(DoT)·회복(HoT)처럼 원본 수치를 반복 수정하는 용도에 적합하다.
-        <code>ExecutePeriodicEffectOnApplication = true</code>면 적용 즉시 1회 선행 실행된다.
-      </span>
-    </div>
-
-    <h3>ModifierOperation — CurrentValue 계산 공식</h3>
-    <div class="code-block">
-      <div class="code-block__header">
-        <div class="code-block__dots"><span></span><span></span><span></span></div>
-        <span class="code-block__lang">수식</span>
-      </div>
-      <pre>CurrentValue = ((Base + ΣAddBase) × MultiplyAdditive / DivideAdditive × ΠMultiplyCompound) + ΣAddFinal
-
-<span class="cm">// Override가 하나라도 있으면 위 계산 전체를 무시하고 해당 값으로 덮어씀</span></pre>
-    </div>
-
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr><th>Operation</th><th>누산 방식</th><th>용도 예시</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><code>AddBase</code></td><td><code>addBase += mag</code></td><td>플랫 수치 증가 (+50 공격력), Instant / Periodic에서 주로 사용</td></tr>
-          <tr><td><code>MultiplyAdditive</code></td><td><code>multiplyAdditive += (mag − 1)</code></td><td>퍼센트 증폭 합산 (10% + 20% = 30% — 소스가 많아도 단순 합산)</td></tr>
-          <tr><td><code>DivideAdditive</code></td><td><code>divideAdditive += (mag − 1)</code></td><td>퍼센트 감쇄 합산 (방어력 감소 중첩)</td></tr>
-          <tr><td><code>MultiplyCompound</code></td><td><code>multiplyCompound *= mag</code></td><td>복리 배율 (1.1 × 1.2 = 1.32 — 아이템 세트 보너스 등)</td></tr>
-          <tr><td><code>AddFinal</code></td><td><code>addFinal += mag</code></td><td>배율 계산 이후 플랫 합산 (최종 고정 보정값)</td></tr>
-          <tr><td><code>Override</code></td><td>최종 고정값 강제 부여</td><td>스턴 시 Speed = 0, 특정 상태 고정</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <h3>GameplayEffectContext — 발동 맥락</h3>
-    <p>
-      GE 적용 시 발동 주체(<code>Instigator</code> ASC)와 실제 원인 오브젝트(<code>EffectCauser</code>)를 함께 전달할 수 있다.
-      <code>GameplayEffectContextHandle</code>은 null-safe struct 래퍼로,
-      맥락이 불필요한 경우(장비 장착 등) <code>default</code>로 전달한다.
-      Execution에서 Source/Target ASC를 모두 읽을 수 있어 발사체 피해 계산처럼
-      발동 주체의 수치를 참조해야 하는 경우에 활용된다.
-    </p>
-    <div class="code-block">
-      <div class="code-block__header">
-        <div class="code-block__dots"><span></span><span></span><span></span></div>
-        <span class="code-block__lang">C# — Context 사용 예시</span>
-      </div>
-      <pre><span class="cm">// 발사체가 대상 ASC에 피해 GE를 적용하는 경우</span>
-<span class="kw">var</span> ctx    = <span class="kw">new</span> <span class="ty">GameplayEffectContext</span>(instigatorAsc, bulletGameObject);
-<span class="kw">var</span> handle = <span class="kw">new</span> <span class="ty">GameplayEffectContextHandle</span>(ctx);
-targetAsc.<span class="fn">ApplyGameplayEffectToSelf</span>(damageGE, handle);
-
-<span class="cm">// 장비 장착처럼 맥락이 없는 경우 — default(struct) 전달</span>
-asc.<span class="fn">ApplyGameplayEffectToSelf</span>(equipmentStatGE);</pre>
-    </div>
-
-    <h3>GameplayEffectExecution — 예정</h3>
-    <div class="callout callout--warn">
-      <span class="callout__icon">🔧</span>
-      <span>
-        <strong>미구현 (구조 확정, 구현 예정)</strong> —
-        단순 Modifier로 표현할 수 없는 복합 계산
-        (예: Source.Damage − Target.Armor × 관통률)을
-        <code>GameplayEffectExecution</code> ScriptableObject 서브클래스로 캡슐화한다.
-        <code>Execute(parameters)</code> 안에서 Source·Target ASC를 읽고
-        <code>parameters.AddOutput(handle, magnitude)</code>으로 결과를 출력하면
-        ASC가 <code>AddBase</code> / <code>Override</code> 연산으로 BaseValue에 즉시 반영한다.
-        GE 하나에 여러 Execution을 붙일 수 있으며 각 출력은 순서대로 처리된다.
-      </span>
-    </div>
-
-    <h3>AbilitySystemComponent — 주요 API</h3>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr><th>메서드</th><th>용도</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><code>ApplyGameplayEffectToSelf(GE, ctx, level)</code></td><td>GE SO → Spec 생성 후 자신에게 적용. Instant는 즉시 실행 후 Invalid Handle 반환.</td></tr>
-          <tr><td><code>RemoveActiveGameplayEffect(handle)</code></td><td>핸들로 이펙트 제거. Period == 0이었으면 CurrentValue 재계산.</td></tr>
-          <tr><td><code>GetAttributeCurrentValue(handle)</code></td><td>모디파이어 누산 후 CurrentValue 반환 (캐싱된 값, 재계산 없음).</td></tr>
-          <tr><td><code>GetAttributeBaseValue(handle)</code></td><td>원본 BaseValue 반환.</td></tr>
-          <tr><td><code>SetBaseAttributeValue(handle, float)</code></td><td>BaseValue 직접 설정 후 CurrentValue 재계산.</td></tr>
-          <tr><td><code>AddAttributeSet(set)</code></td><td>AttributeSet 등록. 같은 타입은 하나만 허용 (<code>TryAdd</code>).</td></tr>
-        </tbody>
-      </table>
     </div>
   </section>
 
@@ -618,33 +716,66 @@ asc.<span class="fn">ApplyGameplayEffectToSelf</span>(equipmentStatGE);</pre>
       <h2>코드 컨벤션</h2>
     </div>
 
-    <p style="font-size:13px">네이밍·포맷팅 규칙은 <code>.editorconfig</code>에 의해 자동 적용된다.</p>
+    <p style="font-size:13px;margin-bottom:16px">네이밍·포맷팅 규칙은 <code>.editorconfig</code>에 의해 자동 적용된다.</p>
 
-    <h3>네이밍 규칙</h3>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>대상</th><th>규칙</th><th>예시</th></tr></thead>
-        <tbody>
-          <tr><td>클래스 / 구조체</td><td>PascalCase</td><td><code>PlayerController</code></td></tr>
-          <tr><td>인터페이스</td><td><code>I</code> + PascalCase</td><td><code>IDamageable</code></td></tr>
-          <tr><td>메서드 / 프로퍼티</td><td>PascalCase</td><td><code>TakeDamage()</code></td></tr>
-          <tr><td>public 필드</td><td>PascalCase</td><td><code>MoveSpeed</code></td></tr>
-          <tr><td>private 필드</td><td><code>_</code> + camelCase</td><td><code>_health</code></td></tr>
-          <tr><td>지역 변수 / 매개변수</td><td>camelCase</td><td><code>deltaTime</code></td></tr>
-          <tr><td>상수</td><td>PascalCase</td><td><code>MaxHealth</code></td></tr>
-          <tr><td>이벤트</td><td><code>On</code> + PascalCase</td><td><code>OnDeath</code></td></tr>
-          <tr><td>열거형</td><td>PascalCase</td><td><code>GameState.Playing</code></td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <h3>MonoBehaviour 멤버 순서</h3>
-    <div class="code-block">
-      <div class="code-block__header">
-        <div class="code-block__dots"><span></span><span></span><span></span></div>
-        <span class="code-block__lang">C#</span>
+    <details class="accordion" id="convention-naming" open>
+      <summary class="accordion__header">네이밍 규칙</summary>
+      <div class="accordion__body">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>대상</th><th>규칙</th><th>예시</th></tr></thead>
+            <tbody>
+              <tr><td>클래스 / 구조체</td><td>PascalCase</td><td><code>PlayerController</code></td></tr>
+              <tr><td>인터페이스</td><td><code>I</code> + PascalCase</td><td><code>IDamageable</code></td></tr>
+              <tr><td>메서드 / 프로퍼티</td><td>PascalCase</td><td><code>TakeDamage()</code></td></tr>
+              <tr><td>public 필드</td><td>PascalCase</td><td><code>MoveSpeed</code></td></tr>
+              <tr><td>private 필드</td><td><code>_</code> + camelCase</td><td><code>_health</code></td></tr>
+              <tr><td>지역 변수 / 매개변수</td><td>camelCase</td><td><code>deltaTime</code></td></tr>
+              <tr><td>상수</td><td>PascalCase</td><td><code>MaxHealth</code></td></tr>
+              <tr><td>이벤트</td><td><code>On</code> + PascalCase</td><td><code>OnDeath</code></td></tr>
+              <tr><td>열거형</td><td>PascalCase</td><td><code>GameState.Playing</code></td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-      <pre><span class="kw">public class</span> <span class="ty">Example</span> : <span class="ty">MonoBehaviour</span>
+    </details>
+
+    <details class="accordion" id="convention-style">
+      <summary class="accordion__header">스타일 규칙 — 중괄호 · var · 접근 한정자</summary>
+      <div class="accordion__body">
+        <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">Allman 스타일 중괄호 (생략 금지), 4스페이스 들여쓰기, 접근 한정자 항상 명시</p>
+        <div class="diff-block">
+          <span class="diff-line diff-line--add">private void Update()</span>
+          <span class="diff-line diff-line--add">{</span>
+          <span class="diff-line diff-line--add">    if (IsGrounded)</span>
+          <span class="diff-line diff-line--add">    {</span>
+          <span class="diff-line diff-line--add">        Jump();</span>
+          <span class="diff-line diff-line--add">    }</span>
+          <span class="diff-line diff-line--add">}</span>
+          <span class="diff-line diff-line--ctx"></span>
+          <span class="diff-line diff-line--del">private void Update() {    // ❌ K&amp;R 스타일</span>
+          <span class="diff-line diff-line--del">    if (IsGrounded) Jump(); // ❌ 중괄호 생략</span>
+          <span class="diff-line diff-line--del">}</span>
+        </div>
+        <div class="diff-block" style="margin-top:8px">
+          <span class="diff-line diff-line--add">var player = GetComponent&lt;PlayerController&gt;(); // ✅ 우변에서 타입 명확</span>
+          <span class="diff-line diff-line--del">var scoreMap = GetScoreMap();                  // ❌ 타입 불명확</span>
+          <span class="diff-line diff-line--ctx"></span>
+          <span class="diff-line diff-line--add">private int _health;</span>
+          <span class="diff-line diff-line--del">int _health;            // ❌ 접근 한정자 생략</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="accordion">
+      <summary class="accordion__header">MonoBehaviour 멤버 순서 · 주석</summary>
+      <div class="accordion__body">
+        <div class="code-block">
+          <div class="code-block__header">
+            <div class="code-block__dots"><span></span><span></span><span></span></div>
+            <span class="code-block__lang">C#</span>
+          </div>
+          <pre><span class="kw">public class</span> <span class="ty">PlayerController</span> : <span class="ty">MonoBehaviour</span>
 {
     <span class="cm">// 1. Fields</span>
     <span class="cm">// 2. Properties</span>
@@ -652,76 +783,20 @@ asc.<span class="fn">ApplyGameplayEffectToSelf</span>(equipmentStatGE);</pre>
     <span class="cm">// 4. public Methods</span>
     <span class="cm">// 5. private Methods</span>
     <span class="cm">// 6. Event Callbacks</span>
-}</pre>
-    </div>
 
-    <h3>중괄호 — Allman 스타일 (생략 금지)</h3>
-    <div class="diff-block">
-      <span class="diff-line diff-line--add">private void Update()</span>
-      <span class="diff-line diff-line--add">{</span>
-      <span class="diff-line diff-line--add">    if (IsGrounded)</span>
-      <span class="diff-line diff-line--add">    {</span>
-      <span class="diff-line diff-line--add">        Jump();</span>
-      <span class="diff-line diff-line--add">    }</span>
-      <span class="diff-line diff-line--add">}</span>
-      <span class="diff-line diff-line--ctx"></span>
-      <span class="diff-line diff-line--del">private void Update() {    // ❌ K&amp;R 스타일</span>
-      <span class="diff-line diff-line--del">    if (IsGrounded) Jump(); // ❌ 중괄호 생략</span>
-      <span class="diff-line diff-line--del">}</span>
-    </div>
-
-    <h3>var 사용</h3>
-    <div class="diff-block">
-      <span class="diff-line diff-line--add">var player = GetComponent&lt;PlayerController&gt;(); // ✅ 우변에서 타입 명확</span>
-      <span class="diff-line diff-line--del">var scoreMap = GetScoreMap();                  // ❌ 타입 불명확</span>
-    </div>
-
-    <h3>접근 한정자 — 항상 명시</h3>
-    <div class="diff-block">
-      <span class="diff-line diff-line--add">private int _health;</span>
-      <span class="diff-line diff-line--add">private void HandleInput() { }</span>
-      <span class="diff-line diff-line--del">int _health;            // ❌ 생략</span>
-      <span class="diff-line diff-line--del">void HandleInput() { } // ❌ 생략</span>
-    </div>
-
-    <h3>주석</h3>
-    <div class="code-block">
-      <div class="code-block__header">
-        <div class="code-block__dots"><span></span><span></span><span></span></div>
-        <span class="code-block__lang">C# — public API는 XML 문서화</span>
-      </div>
-      <pre><span class="cm">/// &lt;summary&gt;</span>
-<span class="cm">/// 플레이어에게 데미지를 줍니다.</span>
-<span class="cm">/// &lt;/summary&gt;</span>
-<span class="cm">/// &lt;param name="damage"&gt;입힐 데미지 양&lt;/param&gt;</span>
-<span class="kw">public void</span> <span class="fn">TakeDamage</span>(<span class="ty">int</span> damage) { }
-
-<span class="cm">// ✅ 인라인은 이유(WHY)만 설명</span>
-<span class="cm">// Rigidbody 이동은 FixedUpdate에서 처리해야 물리 연산이 정확함</span>
-<span class="kw">private void</span> <span class="fn">FixedUpdate</span>() { }</pre>
-    </div>
-
-    <h3>전체 예시</h3>
-    <div class="code-block">
-      <div class="code-block__header">
-        <div class="code-block__dots"><span></span><span></span><span></span></div>
-        <span class="code-block__lang">C#</span>
-      </div>
-      <pre><span class="kw">public class</span> <span class="ty">PlayerController</span> : <span class="ty">MonoBehaviour</span>
-{
     <span class="kw">public float</span> MoveSpeed = <span class="nm">5f</span>;
-
     <span class="at">[SerializeField]</span> <span class="kw">private float</span> _jumpForce = <span class="nm">8f</span>;
-    <span class="kw">private</span> <span class="ty">Rigidbody</span> _rigidbody;
-
     <span class="kw">public event</span> <span class="ty">Action</span> OnDeath;
 
-    <span class="kw">public void</span> <span class="fn">TakeDamage</span>(<span class="ty">int</span> damage)
-    {
-        _health -= damage;
-    }
+    <span class="cm">/// &lt;summary&gt;플레이어에게 데미지를 줍니다.&lt;/summary&gt;</span>
+    <span class="kw">public void</span> <span class="fn">TakeDamage</span>(<span class="ty">int</span> damage) { }
+
+    <span class="cm">// Rigidbody 이동은 FixedUpdate에서 처리해야 물리 연산이 정확함</span>
+    <span class="kw">private void</span> <span class="fn">FixedUpdate</span>() { }
 }</pre>
-    </div>
+        </div>
+      </div>
+    </details>
   </section>
 
   <!-- ⑩ TODO -->
@@ -732,7 +807,7 @@ asc.<span class="fn">ApplyGameplayEffectToSelf</span>(equipmentStatGE);</pre>
     </div>
 
     <!-- GitHub 설정 -->
-    <div class="todo-group" data-group="github">
+    <div class="todo-group" id="todo-github" data-group="github">
       <div class="todo-group__header">
         <span class="todo-group__title">GitHub 설정</span>
         <span class="todo-group__progress"></span>
@@ -760,7 +835,7 @@ asc.<span class="fn">ApplyGameplayEffectToSelf</span>(equipmentStatGE);</pre>
     </div>
 
     <!-- AbilitySystem -->
-    <div class="todo-group" data-group="ability">
+    <div class="todo-group" id="todo-ability" data-group="ability">
       <div class="todo-group__header">
         <span class="todo-group__title">AbilitySystem</span>
         <span class="todo-group__progress"></span>
@@ -812,7 +887,7 @@ asc.<span class="fn">ApplyGameplayEffectToSelf</span>(equipmentStatGE);</pre>
     </div>
 
     <!-- Item Module / Equipment -->
-    <div class="todo-group" data-group="item-module">
+    <div class="todo-group" id="todo-item" data-group="item-module">
       <div class="todo-group__header">
         <span class="todo-group__title">Item Module · Equipment</span>
         <span class="todo-group__progress"></span>
@@ -858,10 +933,8 @@ asc.<span class="fn">ApplyGameplayEffectToSelf</span>(equipmentStatGE);</pre>
           <div class="todo-list__content">
             장비 슬롯 규칙 구현
             <ul class="todo-list__sub">
-              <li>· <code>Weapon</code> 1개</li>
-              <li>· <code>Armor</code> 1개</li>
-              <li>· <code>Accessory</code> 4개</li>
-              <li>· <code>MeleeSubWeapon</code> 1개, 근접 보조 무기 한정</li>
+              <li>· <code>Weapon</code> 1개, <code>Armor</code> 1개, <code>Accessory</code> 4개</li>
+              <li>· <code>MeleeSubWeapon</code> 1개 (근접 보조 무기 한정)</li>
             </ul>
           </div>
         </li>
@@ -871,8 +944,7 @@ asc.<span class="fn">ApplyGameplayEffectToSelf</span>(equipmentStatGE);</pre>
             <code>EquipmentComponent.Equip(ItemData)</code> 구현
             <ul class="todo-list__sub">
               <li>· <code>EquipmentModule</code>이 없는 아이템은 장착 실패</li>
-              <li>· 슬롯 최대 수량 검사</li>
-              <li>· <code>SlotBlockModule</code> 기반 장착 충돌 검사</li>
+              <li>· 슬롯 최대 수량 검사 + <code>SlotBlockModule</code> 기반 충돌 검사</li>
               <li>· 단일 슬롯은 기존 장비 자동 교체, 장신구 5번째 장착은 실패</li>
               <li>· 장착 프리팹 생성 및 손/장착 위치 Attach</li>
             </ul>
@@ -884,7 +956,6 @@ asc.<span class="fn">ApplyGameplayEffectToSelf</span>(equipmentStatGE);</pre>
             장착 상태와 활성 상태 분리
             <ul class="todo-list__sub">
               <li>· 한손/양손 전환 가능 무기는 양손 상태에서 <code>MeleeSubWeapon</code> 비활성</li>
-              <li>· 비활성 장비는 장착 상태를 유지하되 전투 사용 또는 스탯 적용에서 제외 가능</li>
               <li>· 양손 전용 무기는 기존 <code>MeleeSubWeapon</code> 자동 해제</li>
             </ul>
           </div>
@@ -895,7 +966,7 @@ asc.<span class="fn">ApplyGameplayEffectToSelf</span>(equipmentStatGE);</pre>
             <code>InventoryComponent</code> 구현
             <ul class="todo-list__sub">
               <li>· <code>AddItem(ItemData)</code> / <code>RemoveItem(ItemData)</code></li>
-              <li>· 아이템 목록 (<code>List&lt;ItemData&gt;</code>) + 최대 슬롯 수 제한</li>
+              <li>· 아이템 목록 + 최대 슬롯 수 제한</li>
               <li>· <kbd>Tab</kbd> 인벤토리 토글 및 UI 연결 포인트 준비</li>
             </ul>
           </div>
